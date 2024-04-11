@@ -13,7 +13,7 @@ import path from 'path';
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
+// app.use(express.static('public'));
 
 
 // const db = mysql.createConnection({
@@ -23,9 +23,18 @@ app.use(express.static('public'));
 //   database: "devcat",
 // });
 
+  
+
+app.listen(8081, () => {
+  console.log("listening :D");
+});
+
+
+
 const db = mysql.createConnection({
   host: 'ko9.h.filess.io',
   user: 'devcat_bridgebear',
+  port:'3306',
   password: 'a056189ceb3d662d06f98dcbe9503d1810155971',
   database: 'devcat_bridgebear',
   authPlugins: {
@@ -227,8 +236,3 @@ app.get('/categories/:id', (req, res) => {
 });
 
  
- 
-
-app.listen(8081, () => {
-  console.log("listening :D");
-});
