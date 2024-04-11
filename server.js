@@ -25,7 +25,7 @@ app.use(express.json());
 
   
 
-app.listen(3306, () => {
+app.listen(8081, () => {
   console.log("listening :D");
 });
 
