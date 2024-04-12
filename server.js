@@ -16,32 +16,32 @@ app.use(express.json());
 // app.use(express.static('public'));
 
 
-// const db = mysql.createConnection({
-//   host: "localhost",
-//   user: "root",
-//   password: "root",
-//   database: "devcat",
-// });
-
-  
 
 app.listen(8081, () => {
   console.log("listening :D");
 });
 
 
+// -------------------- Host DB ------------------------
+// const db = mysql.createConnection({
+//   host: 'ko9.h.filess.io',
+//   user: 'devcat_bridgebear',
+//   port:'3306',
+//   password: 'a056189ceb3d662d06f98dcbe9503d1810155971',
+//   database: 'devcat_bridgebear',
+//   authPlugins: {
+//     mysql_clear_password: () => () => Buffer.from('root')
+//   }
+// });
 
+
+//---------------- LOCAL TEST ----------------------
 const db = mysql.createConnection({
-  host: 'ko9.h.filess.io',
-  user: 'devcat_bridgebear',
-  port:'3306',
-  password: 'a056189ceb3d662d06f98dcbe9503d1810155971',
-  database: 'devcat_bridgebear',
-  authPlugins: {
-    mysql_clear_password: () => () => Buffer.from('root')
-  }
+  host: "localhost",
+  user: "root",
+  password: "root",
+  database: "devcat",
 });
-
 
 
 db.connect((err) => {
