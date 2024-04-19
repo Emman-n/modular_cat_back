@@ -13,8 +13,8 @@ import path from 'path';
 const app = express();
 app.use(cors());
 app.use(express.json());
-// app.use(express.static('public'));
-
+app.use(express.static('public'));
+app.use('/images', express.static('images'))
 
 
 app.listen(8081, () => {
@@ -54,6 +54,7 @@ db.connect((err) => {
 
 
 
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'public/images');
@@ -70,15 +71,27 @@ const upload = multer({
 });
 
 
+
+// ------------------------ HOME ----------------------------------
+app.get("/", (req, res) => {
+  const sql = "SELECT * FROM categories";
+  db.query(sql, (err, result) => {
+    if (err) return res.json({ Message: "Error inside server" });
+    return res.json(result);
+  });
+});
+
+
+
 // -------------------  ADD PRODUCT -------------------------
-app.post("/addProd/:categoryId", upload.single('image'), (req, res) => {
+app.post("/addProd/:categoryId", upload.single('product_image'), (req, res) => {
   const categoryId = req.params.categoryId;
-  const sql = "INSERT INTO products (`category_id`, `product_name`, `details`,image,`price`) VALUES (?, ?, ?,?,?)";
-  const values = [categoryId, req.body.product_name, req.body.details, req.file.filename, req.body.price,]; 
+  const sql = "INSERT INTO products (`category_id`, `product_name`, `product_details`,product_image,`price`) VALUES (?, ?, ?,?,?)";
+  const values = [categoryId, req.body.product_name, req.body.product_details, req.file.filename, req.body.price,]; 
 
   db.query(sql, values, (err, result) => {
     if (err) return res.json(err);
-    return res.json(result);
+    return res.json(sql);
   });
 
 });
@@ -87,8 +100,8 @@ app.post("/addProd/:categoryId", upload.single('image'), (req, res) => {
 
 // -------------------------- EDIT CAT --------------------------------------
 app.put('/editcat/:categoryId',(req,res)=>{
-  const sql = "UPDATE categories SET `categorie`= ?, `details`= ? WHERE idcategories = ?";
-  const values = [req.body.categorie, req.body.details, req.params.categoryId];  
+  const sql = "UPDATE categories SET `category_name`= ?, `details`= ? WHERE idcategories = ?";
+  const values = [req.body.category_name, req.body.details, req.params.categoryId];  
 
   db.query(sql, values, (err, result) => {
     if (err) return res.json(err);
@@ -98,10 +111,10 @@ app.put('/editcat/:categoryId',(req,res)=>{
 
 
 
-// -------------------------- EDIT CAT --------------------------------------
+// -------------------------- EDIT PROD --------------------------------------
 app.put('/editprod/:product_id',(req,res)=>{
-  const sql = "UPDATE products SET `product_name`= ?, `details`= ?, `price`= ? WHERE product_id = ?";
-  const values = [req.body.product_name, req.body.details, req.body.price, req.params.product_id]; 
+  const sql = "UPDATE products SET `product_name`= ?, `product_details`= ?, `price`= ? WHERE product_id = ?";
+  const values = [req.body.product_name, req.body.product_details, req.body.price, req.params.product_id]; 
 
   db.query(sql, values, (err, result) => {
     if (err) return res.json(err);
@@ -134,8 +147,8 @@ app.delete('/deleteProd/:product_id', (req, res) => {
 
 // ---------------------------- ADD CAT -------------------------------------
 app.post("/categories", upload.single('cat_image'),  (req, res) => {
-  const sql = "INSERT INTO categories (`categorie`,`details`,cat_image) VALUES (?,?,?)";
-  const values = [req.body.categorie, req.body.details, req.file.filename];
+  const sql = "INSERT INTO categories (`category_name`,`category_details`,cat_image) VALUES (?,?,?)";
+  const values = [req.body.category_name, req.body.category_details, req.file.filename];
 
   db.query(sql, values, (err, result) => {
     if (err) return res.json(err);
@@ -144,10 +157,6 @@ app.post("/categories", upload.single('cat_image'),  (req, res) => {
 
   });
 });
-
-
-
-
 
 
 // app.post('/upload/:categoryId', upload.single('image'), (req, res)  => {
@@ -160,18 +169,6 @@ app.post("/categories", upload.single('cat_image'),  (req, res) => {
 //   });
 // });
 
-
-
-
-
-// ------------------------ HOME ----------------------------------
-app.get("/", (req, res) => {
-  const sql = "SELECT * FROM categories";
-  db.query(sql, (err, result) => {
-    if (err) return res.json({ Message: "Error inside server" });
-    return res.json(result);
-  });
-});
 
  
 // ------------------------  PRODUCT DETAILS TO EDIT ----------------------------------
@@ -187,7 +184,7 @@ app.get('/product/:id',(req,res)=>{
 
 // ------------------------  CATEGORIE DETAILS ----------------------------------
 
-app.get('/categorie/:id',(req,res)=>{
+app.get('/get_category/:id',(req,res)=>{
   const sql = "SELECT * FROM categories WHERE idcategories = ?" ;
   const id =  req.params.id;
   db.query(sql,[id],(err,result)=>{
@@ -197,10 +194,10 @@ app.get('/categorie/:id',(req,res)=>{
 })
 
  
-app.get('/Details/:id', (req, res) => {
+app.get('/get_product/:id', (req, res) => {
   const categoryId = req.params.id;
   const sql = `
-    SELECT products.product_id, products.product_name, products.details
+    SELECT products.product_id, products.product_name, products.product_details
     FROM products
     INNER JOIN categories ON products.category_id = categories.id
     WHERE categories.id = ?
@@ -217,11 +214,12 @@ app.get('/Details/:id', (req, res) => {
  
 // ------------------------  DISPLAY PRODUCTS ----------------------------------
 
-app.get('/categories/:id', (req, res) => {
+app.get('/get_products/:id', (req, res) => {
   const categoryId = req.params.id;
 
   const sql = `
-    SELECT categories.idcategories,categories.categorie,categories.details, products.product_id, products.product_name, products.details, products.price, products.image
+    SELECT categories.idcategories, categories.category_name, categories.category_details, 
+    products.product_id, products.product_name, products.product_details, products.price, products.product_image
     FROM categories
     LEFT JOIN products ON categories.idcategories = products.category_id
     WHERE categories.idcategories = ?
