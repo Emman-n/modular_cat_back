@@ -23,25 +23,25 @@ app.listen(8081, () => {
 
 
 // -------------------- Host DB ------------------------
-// const db = mysql.createConnection({
-//   host: 'ko9.h.filess.io',
-//   user: 'devcat_bridgebear',
-//   port:'3306',
-//   password: 'a056189ceb3d662d06f98dcbe9503d1810155971',
-//   database: 'devcat_bridgebear',
-//   authPlugins: {
-//     mysql_clear_password: () => () => Buffer.from('root')
-//   }
-// });
+const db = mysql.createConnection({
+  host: 'ko9.h.filess.io',
+  user: 'devcat_bridgebear',
+  port:'3306',
+  password: 'a056189ceb3d662d06f98dcbe9503d1810155971',
+  database: 'devcat_bridgebear',
+  authPlugins: {
+    mysql_clear_password: () => () => Buffer.from('root')
+  }
+});
 
 
 //---------------- LOCAL TEST ----------------------
-const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "root",
-  database: "devcat",
-});
+// const db = mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//   password: "root",
+//   database: "devcat",
+// });
 
 
 db.connect((err) => {
@@ -100,8 +100,8 @@ app.post("/addProd/:categoryId", upload.single('product_image'), (req, res) => {
 
 // -------------------------- EDIT CAT --------------------------------------
 app.put('/editcat/:categoryId',(req,res)=>{
-  const sql = "UPDATE categories SET `category_name`= ?, `details`= ? WHERE idcategories = ?";
-  const values = [req.body.category_name, req.body.details, req.params.categoryId];  
+  const sql = "UPDATE categories SET `category_name`= ?, `category_details`= ? WHERE idcategories = ?";
+  const values = [req.body.category_name, req.body.category_details, req.params.categoryId];  
 
   db.query(sql, values, (err, result) => {
     if (err) return res.json(err);
