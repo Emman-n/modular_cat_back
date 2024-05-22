@@ -7,8 +7,8 @@ import path from 'path';
 
  
 
-// const storage = multer.memoryStorage(); // Store images in memory, adjust as needed
-// const upload = multer({ storage: storage });
+//  const storage = multer.memoryStorage(); // Store images in memory, adjust as needed
+//  const upload = multer({ storage: storage });
 
 const app = express();
 app.use(cors());
@@ -24,14 +24,11 @@ app.listen(8081, () => {
 
 // -------------------- Host DB ------------------------
 const db = mysql.createConnection({
-  host: 'ko9.h.filess.io',
-  user: 'devcat_bridgebear',
+  host: 'database-2.c9qssgmus9tj.us-east-1.rds.amazonaws.com',
+  user: 'rooot',
   port:'3306',
-  password: 'a056189ceb3d662d06f98dcbe9503d1810155971',
-  database: 'devcat_bridgebear',
-  authPlugins: {
-    mysql_clear_password: () => () => Buffer.from('root')
-  }
+  password: 'password',
+  database: 'dev_cat',
 });
 
 
@@ -82,19 +79,15 @@ app.get("/", (req, res) => {
 });
 
 
-
-// -------------------  ADD PRODUCT -------------------------
-app.post("/addProd/:categoryId", upload.single('product_image'), (req, res) => {
-  const categoryId = req.params.categoryId;
-  const sql = "INSERT INTO products (`category_id`, `product_name`, `product_details`,product_image,`price`) VALUES (?, ?, ?,?,?)";
-  const values = [categoryId, req.body.product_name, req.body.product_details, req.file.filename, req.body.price,]; 
-
-  db.query(sql, values, (err, result) => {
-    if (err) return res.json(err);
-    return res.json(sql);
+app.get("/home", (req, res) => {
+  const sql = "SELECT * FROM categories";
+  db.query(sql, (err, result) => {
+    if (err) return res.json({ Message: "Error inside server" });
+    return res.json(result);
   });
-
 });
+
+
 
 
 
@@ -145,10 +138,24 @@ app.delete('/deleteProd/:product_id', (req, res) => {
 
 
 
+// -------------------  ADD PRODUCT -------------------------
+app.post("/addProd/:categoryId", upload.single('product_image'), (req, res) => {
+  const categoryId = req.params.categoryId;
+  const sql = "INSERT INTO products (`category_id`, `product_name`, `product_details`,product_image,`price`) VALUES (?, ?, ?,?,?)";
+  const values = [categoryId, req.body.product_name, req.body.product_details, req.file.filename, req.body.price,]; 
+
+  db.query(sql, values, (err, result) => {
+    if (err) return res.json(err);
+    return res.json(sql);
+  });
+
+});
+
+
 // ---------------------------- ADD CAT -------------------------------------
-app.post("/categories", upload.single('cat_image'),  (req, res) => {
+app.post("/addCategories", upload.single('cat_image'),  (req, res) => {
   const sql = "INSERT INTO categories (`category_name`,`category_details`,cat_image) VALUES (?,?,?)";
-  const values = [req.body.category_name, req.body.category_details, req.file.filename];
+  const values = [req.body.category_name, req.body.category_details, req.file.filename ];
 
   db.query(sql, values, (err, result) => {
     if (err) return res.json(err);
