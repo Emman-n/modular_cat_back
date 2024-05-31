@@ -17,8 +17,10 @@ app.use(express.static('public'));
 app.use('/images', express.static('images'))
 
 
-app.listen(8081, () => {
-  console.log("listening :D");
+const port = 8081;
+
+ app.listen(port, () => {
+  console.log(`listening on port ${port} :D`);
 });
 
 
