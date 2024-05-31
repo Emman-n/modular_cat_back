@@ -22,6 +22,15 @@ app.listen(8081, () => {
 });
 
 
+
+app.use(cors({
+  origin: 'https://your-react-app-domain.com', // or '*' to allow all origins
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
+
+
 // -------------------- Host DB ------------------------
 const db = mysql.createConnection({
   host: 'database-2.c9qssgmus9tj.us-east-1.rds.amazonaws.com',
