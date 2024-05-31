@@ -26,7 +26,7 @@ const port = 8081;
 
 
 app.use(cors({
-  origin: 'https://your-react-app-domain.com', // or '*' to allow all origins
+  origin: '*',  
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
