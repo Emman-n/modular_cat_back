@@ -24,30 +24,37 @@ app.listen(8081, () => {
 
 
 app.use(cors({
-  origin: 'https://your-react-app-domain.com', // or '*' to allow all origins
+  origin: 'http://react-app-catalog.s3-website-us-east-1.amazonaws.com', // or '*' to allow all origins
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 
+// app.use(cors({
+//   origin: 'http://localhost:3000', // Allow requests from your React frontend
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+// }));
+
+
 
 // -------------------- Host DB ------------------------
-const db = mysql.createConnection({
-  host: 'database-2.c9qssgmus9tj.us-east-1.rds.amazonaws.com',
-  user: 'rooot',
-  port:'3306',
-  password: 'password',
-  database: 'dev_cat',
-});
+// const db = mysql.createConnection({
+//   host: 'database-2.c9qssgmus9tj.us-east-1.rds.amazonaws.com',
+//   user: 'rooot',
+//   port:'3306',
+//   password: 'password',
+//   database: 'dev_cat',
+// });
 
 
 //---------------- LOCAL TEST ----------------------
-// const db = mysql.createConnection({
-//   host: "localhost",
-//   user: "root",
-//   password: "root",
-//   database: "devcat",
-// });
+const db = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "root",
+  database: "devcat",
+});
 
 
 db.connect((err) => {
