@@ -33,10 +33,20 @@ app.listen(8081, () => {
 
 
 app.use(cors({
-  origin: 'http://localhost:3000', // Allow requests from your React frontend
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  origin: "http://react-app-catalog.s3-website-us-east-1.amazonaws.com",
+  methods: "GET,POST,PUT,DELETE",
+  allowedHeaders: "Content-Type,Authorization"
 }));
+
+
+
+
+
+// app.use(cors({
+//   origin: 'http://localhost:3000', // Allow requests from your React frontend
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+// }));
 
 
 
