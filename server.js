@@ -13,24 +13,6 @@ dotenv.config();
 //  const upload = multer({ storage: storage });
 
 const app = express();
-app.use(cors());
-app.use(express.json());
-app.use(express.static('public'));
-app.use('/images', express.static('images'))
-
-
-app.listen(8081, () => {
-  console.log("listening :D");
-});
-
-
-
-// app.use(cors({
-//   origin: 'http://react-app-catalog.s3-website-us-east-1.amazonaws.com', // or '*' to allow all origins
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//   allowedHeaders: ['Content-Type', 'Authorization'],
-// }));
-
 
 app.use(cors({
   origin: "http://react-app-catalog.s3-website-us-east-1.amazonaws.com",
@@ -38,6 +20,20 @@ app.use(cors({
   allowedHeaders: "Content-Type,Authorization"
 }));
 
+
+
+// app.use(cors());
+app.use(express.json());
+app.use(express.static('public'));
+app.use('/images', express.static('images'))
+app.options("*", cors());
+
+
+
+
+app.listen(8081, () => {
+  console.log("listening :D");
+});
 
 
 
