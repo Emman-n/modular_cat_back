@@ -1,11 +1,13 @@
 import express from "express";
 import cors from "cors";
-import mysql from "mysql2";
 import multer from 'multer';
 import path from 'path';
+import mysql from "mysql2";
+import dotenv from 'dotenv';
 
 
- 
+dotenv.config();
+
 
 //  const storage = multer.memoryStorage(); // Store images in memory, adjust as needed
 //  const upload = multer({ storage: storage });
@@ -23,24 +25,24 @@ app.listen(8081, () => {
 
 
 
-app.use(cors({
-  origin: 'http://react-app-catalog.s3-website-us-east-1.amazonaws.com', // or '*' to allow all origins
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
-
-
 // app.use(cors({
-//   origin: 'http://localhost:3000', // Allow requests from your React frontend
+//   origin: 'http://react-app-catalog.s3-website-us-east-1.amazonaws.com', // or '*' to allow all origins
 //   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 //   allowedHeaders: ['Content-Type', 'Authorization'],
 // }));
 
 
+app.use(cors({
+  origin: 'http://localhost:3000', // Allow requests from your React frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
+
 
 // -------------------- Host DB ------------------------
 // const db = mysql.createConnection({
-//   host: 'database-2.c9qssgmus9tj.us-east-1.rds.amazonaws.com',
+//   host: ' ',
 //   user: 'rooot',
 //   port:'3306',
 //   password: 'password',
@@ -48,13 +50,28 @@ app.use(cors({
 // });
 
 
-//---------------- LOCAL TEST ----------------------
+
+
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "root",
-  database: "devcat",
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  ssl: {
+    rejectUnauthorized: false // Optional: Enforce SSL security if using AWS RDS
+  }
 });
+
+
+
+
+//---------------- LOCAL TEST ----------------------
+// const db = mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//   password: "root",
+//   database: "devcat",
+// });
 
 
 db.connect((err) => {
@@ -65,6 +82,8 @@ db.connect((err) => {
   console.log("Connected to MySQL database");
 });
 
+
+export default db;
 
 
 
