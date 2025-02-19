@@ -164,7 +164,7 @@ app.post("/login", (req, res) => {
       return res.json({
         token,
         role: user.role,
-        business_id: user.id, // ✅ Send `id` as `business_id`
+        business_id: user.id,  
       });
     } else {
       return res.status(401).json({ message: "Invalid credentials" });
@@ -176,14 +176,18 @@ app.post("/login", (req, res) => {
 // -------------------------- Register  --------------------------------------
 
 app.post("/register", upload.single("usr_logo"), (req, res) => {
-  const { business_name, email, password } = req.body;
+  const { business_name, email, password, phone,location,description } = req.body;
   const logoFilename = req.file ? req.file.filename : null;  
 
-  const sql = "INSERT INTO users (usr_name, email, password, role, usr_logo) VALUES (?, ?, ?, 'admin', ?)";
-  db.query(sql, [business_name, email, password, logoFilename], (err, result) => {
-    if (err) return res.status(500).json({ message: "Error creating user", error: err });
+  const sql = "INSERT INTO users (usr_name, email, password, role, usr_logo, usr_phone, usr_location, usr_description) VALUES (?, ?, ?, 'admin', ? , ?, ?, ?)";
+  db.query(sql, [business_name, email, password, logoFilename, phone, location, description], (err, result) => {
+    if (err) return res.status(500).json({ message: "Error creating user", error: err, sqlQuery: sql });
 
-    res.json({ message: "Account registered successfully!", userId: result.insertId });
+    res.json({
+      message: "this is a test",
+      userId: result.insertId,
+      sqlQuery: sql    
+    });
   });
 });
 
@@ -192,18 +196,18 @@ app.listen(5000, () => {
 });
 
 
+// -------------------------- ABOUT --------------------------------------
 
-// app.post("/addCategories", upload.single('cat_image'),  (req, res) => {
-//   const sql = "INSERT INTO categories (`category_name`,`category_details`,cat_image, business_id) VALUES (?,?,?,?)";
-//   const values = [req.body.category_name, req.body.category_details, req.file.filename , req.body.business_id ];
+app.get("/about/:businessId", (req, res) => {
+  const sql = "SELECT usr_name, email, usr_logo, usr_phone, usr_location, usr_description FROM users WHERE id = ?";
+  db.query(sql, [req.params.businessId], (err, result) => {
+    if (err) return res.status(500).json({ message: "Error fetching business data", error: err });
+    if (result.length === 0) return res.status(404).json({ message: "Business not found" });
+    res.json(result[0]);  
+  });
+});
 
-//   db.query(sql, values, (err, result) => {
-//     if (err) return res.json(err);
-//     const categoryId = result.insertId;
-//     return res.json({ categoryId });
 
-//   });
-// });
 
 
 // -------------------------- EDIT CAT --------------------------------------
